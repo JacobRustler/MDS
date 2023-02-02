@@ -26,10 +26,18 @@ const client = new Client({
 
   client.connect();
 
-app.get('/master',(req,res)=>{
-    res.send('Inicial')
-})
+    app.get('/read', async (req, res) => {
+        
+        const { rows } = await client.query('select * from DatosRaspberry');
+        res.send(rows);
+    });
 
-app.listen(port, () =>{
-    console.log(`Example app listening on port ${port}`)
-})
+    app.post('/create', async (req, res) => {
+        const {CurrentTime, Light, AirHumidity, Temperature, Pump} = req.body
+        client.query(`INSERT INTO DatosRaspberry (CurrentTime, Light, AirHumidity, Temperature, Pump) VALUES('${CurrentTime}', ${Light} , ${AirHumidity} , ${Temperature} , '${Pump}')`)
+        res.send('NUEVOS DATOS CREADOS')
+    });
+
+    app.listen(port, () =>{
+        console.log(`Example app listening on port ${port}`)
+    })
